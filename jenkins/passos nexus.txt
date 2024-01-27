@@ -1,0 +1,8 @@
+[root@jenkins ~]# docker volume create --name nexus-data
+docker run -d -p 8091:8091 -p 8123:8123 --name nexus -v nexus-data:/nexus-data sonatype/nexus3
+[root@jenkins ~]# docker rm -f nexus
+[root@jenkins ~]# docker run -d -p 8091:8081 -p 8123:8123 --name nexus -v nexus-data:/nexus-data sonatype/nexus3
+[root@jenkins ~]# docker logs -f nexus
+[root@jenkins ~]# docker ps
+[root@jenkins ~]# docker exec -it nexus bash
+bash-4.4$ cat /nexus-data/admin.password

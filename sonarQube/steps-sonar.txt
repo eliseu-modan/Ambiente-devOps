@@ -1,0 +1,40 @@
+passos sonar qube
+
+1 - subir maquina virtual com o vagrantfile
+
+2 - realizar o provisionamento do sonar instalação do sonar e java com vagrant provision
+
+3 - após realizar o provisonamento entramos em nossa maquina via ssh 
+
+4- executamos o comando  sudo systemctl restart sonar.service 
+
+5- verificamos se o serviço do sonar esta ativo  sudo systemctl status sonar.service
+
+6 - após estando executando podemos acessar a port 9000 localhost:9000 para acessarmos o sonarqube 
+
+7 - podemos logar no sonar com o login admin e senha admin
+
+8-  após isso precisamos instalar o sonar scanner na nossa mv para configurarmos nosso ambiente da maquina com a interface do sonar disponibilizada na localhost 9000
+
+9 - para isso configuramos nosso provision com novas tarefas para instalarmos o sonar scanner
+
+10 - aplicamos o comando vagrant provision após a instalação entramos na nossa maquina com vagrant ssh ,
+
+11 - entramos no diretório cd /opt  , ls e podemos verificar o sonarqube e o sonar sanner instalados , 
+
+12 -precisamos verificar se o nome do sonar-scanner não esteja (sonar-scanner-4.6.2.2472-linux) se tiver precisaremos mudar para sonar-scanner
+que ficaria assim  (mv sonar-scanner-4.6.2.2472-linux sonar-scanner) depois aplicamos o comando sonar-scanner para executarmos e testar-lo
+
+13 - em nosso projeto do sonar sera gerado um token sonar-scanner \
+  -Dsonar.projectKey=teste2 \
+  -Dsonar.sources=. \
+  -Dsonar.host.url=http://localhost:9000 \
+  -Dsonar.login=abd4a445b85c52b36fff207b874e034215dbfccc 
+  esse token colocamos ele para executarmos dentro do diretório do nosso projeto na mv e
+  automaticamente nosso código sera analisado para a interface do sonarqube
+ 
+ sudo systemctl restart sonar.service
+ sudo systemctl status sonar.service
+
+14b9b31fc7794e39a8aa39e3686e2ad802fc1b6b
+sonar-scanner   -Dsonar.projectKey=tasks   -Dsonar.sources=.   -Dsonar.host.url=http://localhost:9000   -Dsonar.login=6ad1ab35163decd3da71858794b444311b6f0fc0

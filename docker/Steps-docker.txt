@@ -1,0 +1,64 @@
+
+1 - instalar maquinas e realizar o provision 
+2 - entrar na maquina via ssh dar o comando 
+- sudo su -
+- criar diretório da aplicação mkid frontend / backend
+- criar 2 arquivos dockerfile um para cada diretório
+- colar nossos comandos docker 
+- sudo usermod -aG docker $USER 
+- sudo docker build -t devops/apptaskfrontend . (sempre letras minusculas)
+- sudo docker build -t devops/apptaskbackend . (sempre letras minusculas)
+- sudo docker run -it devops/apptaskfrontend /bin/sh
+- sudo docker run -it devops/apptaskbackend /bin/sh
+
+- docker  run -p 5173:5173 -it apptaskfrontend
+- docker  run -p 3333:3333 -it apptaskbackend
+
+- instalar docker compose 
+sudo curl -L "https://github.com/docker/compose/releases/download/1.25.5/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+docker-compose --version
+- criar arquivo docker-compose.yml e colar nossas configurações (arquivo precisa estar no mesmo diretório do dockerfile)
+- RODAR O COMANDO DOCKER UP
+
+
+
+comandos docker  :
+docker images
+docker pull
+docker rmi nome_da_imagem
+docker ps
+docker ps -a
+docker start nome_do_container
+docker stop nome_do_container
+docker restart nome_do_container
+docker rm nome_do_container
+docker exec -it nome_do_container /bin/bash
+docker-compose up
+docker-compose down
+docker logs nome_do_container
+docker events
+docker run nome_da_imagem
+docker run -p porta_host:porta_container nome_da_imagem
+docker run -d nome_da_imagem
+docker run --name nome_do_container nome_da_imagem
+docker run -v /caminho/local:/caminho/container nome_da_imagem
+docker stop $(docker ps -aq)
+docker rm $(docker ps -aq)
+docker rmi $(docker images -aq)
+docker stop $(docker ps -aq) && docker rm $(docker ps -aq) && docker rmi $(docker images -aq)
+
+
+               
+
+
+
+
+
+
+
+
+
+
+

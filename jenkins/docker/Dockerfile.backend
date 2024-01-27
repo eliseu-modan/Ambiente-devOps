@@ -1,0 +1,20 @@
+# Dockerfile para construir o backend
+FROM node:16-alpine AS backend-builder
+
+# Configuração do diretório de trabalho
+WORKDIR /backend
+
+# Instalação do git e dependências necessárias
+RUN apk --no-cache add git openssh-client
+
+# Copiar apenas os arquivos necessários para instalar as dependências
+COPY backend/package.json .
+
+# Instalar as dependências
+RUN npm install --save
+
+# Copiar o restante dos arquivos do backend
+COPY backend .
+
+# Tornar o binário do nodemon executável
+RUN chmod +x node_modules/.bin/nodemon

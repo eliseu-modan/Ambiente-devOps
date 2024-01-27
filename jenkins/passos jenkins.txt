@@ -1,0 +1,87 @@
+1 - criar maquina virtual jenkins , configurar o vagrantfile e provision.sh e criar  a maquina com vagrant up
+
+2 - acessar nosso serviço jenkins em local host 8080
+
+3 - após instalar precisamos ir até o caminho solicitado pela interface /var/lib/jenkins/initialAdminPassword e aplicar o comando
+cat initialAdminPassword 
+
+4 - copiamos a chave e colamos no campo da nossa interface para a instalação do jenkins 
+
+5 - depois clicamos no botão instalar plugins recomendados
+
+6 - enviar nossa aplicação para o repositório git com os documentos do docker e docker-compose juntos  
+
+7 - vamo na interface do jenkins e criar um novo job (pipeline)
+
+8 - navegar até pipeline configurar nossa conexão com o git colocando nossos nome de usuario e a chave gerada 
+
+eliseu-modan (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)
+
+9 - configurar a branch e o arquivo do jenkins 
+
+10 - criar pipeline conectado ao jenkins
+
+11 - executar pipeline com os stages ja configurados 
+ -Criar Dockerfile.combined
+ -Build da imagem Docker
+ -Subir docker compose - tasks
+-Aguardar subida dos containers
+
+12- conectar jenkins a maquina do sonarqube
+13- ir até o vagrantfile do sonarqube e adicionar :
+  config.vm.network "private_network", ip: "192.168.1.6"
+   ir até a maquina do jenkins e adicionar no vagrantfile :
+     config.vm.network "private_network", ip: "192.168.1.5"
+14- ir até a maquina do sonar qube e instalar o tellnet :
+ sudo yum install telnet -y
+15- testar conexão telnet ir até a maquina do sonarqube e  aplicar o comando : telnet 192.168.1.5 8080 
+e testar a conexão com jenkins  
+16 - instalar o sonarScanner na maquina do  jenkins manualmente
+aplicar os comandos via ssh
+1- yum install wget unzip -y
+2- wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.2.2472-linux.zip
+unzip sonar-scanner-cli-4.6.2.2472-linux.zip -d /opt/
+mv /opt/sonar-scanner-cli-4.6.2.2472 /opt/sonar-scanner
+chown -R jenkins:jenkins /opt/sonar-scanner
+echo 'export PATH=$PATH:/opt/sonar-scanner/bin' | sudo tee -a /etc/profile
+curl -sL https://rpm.nodesource.com/setup_10.x | sudo bash -
+sudo yum install nodejs -y
+
+17-ir até a interface do jenkins e instalar o sonarqube scanner em gerenciar jenkins-> plugings ->
+18 - ir até as configurações globails do jenkins e navegar até sonarqube servers chek em Environment variables
+19 - adcionar sonarqube 
+-nome sonar-server
+-aplicar o server url http://192.168.1.6:9000
+- autenticação aplicar token gerado na interface do sonar
+- configurar token J
+enkins Credentials Provider: Jenkins
+Add Credentials
+20 -reiniciar jenkins
+21-configurar a ferramenta do sonar scanner global tools configuration
+22-SonarQube Scanner
+Name
+sonar-scanner
+SONAR_RUNNER_HOME
+/opt/sonar-scanner
+
+Instalar automaticamente
+?no
+
+configurar nosso jenkinsfile com as configurações do sonar 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+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 token git
+usermod -aG docker jenkins
