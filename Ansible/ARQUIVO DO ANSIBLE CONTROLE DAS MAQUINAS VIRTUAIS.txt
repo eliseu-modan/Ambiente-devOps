@@ -1,0 +1,25 @@
+ARQUIVO DO ANSIBLE CONTROLE DA MSQUINAS VIRTUAIS 
+
+
+1 - PODE-SE CRIAR POR GRUPOS APP  DB E AGRUPAR MAQUINAS QUE POSSUEM O MESMO PERFIL
+
+control node ssh / vi /etc/ansible/hosts
+[apps[ [dbs]
+
+ 2 - comando para gerar chave privada e publica 
+ssh-keygen
+
+id-rsa public 
+id-rsa privado
+
+ssh-keygen
+[vagrant@control-node home]$ ls -lha
+[vagrant@control-node .ssh]$ ls
+ cat id_rsa.pub
+[vagrant@control-node .ssh]$ ssh vagrant@db01
+vagrant reload --provision
+cat authorized_keys
+echo "" > ~/.ssh/known_hosts
+[vagrant@control-node ~]$ ansible -m ping -i 'app01,db01' all
+
+

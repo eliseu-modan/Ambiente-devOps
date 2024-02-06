@@ -1,0 +1,124 @@
+- name: Configurar aplicação completa
+  hosts: app
+  user: vagrant
+  become: true
+  tasks:
+    - name: Adicionar usuário de app
+      user:
+        name: app
+        comment: Usuário de aplicação
+        uid: 500
+
+    - name: Instalação do Git
+      yum:
+        name: git
+        state: latest
+
+    - name: Excluir repositório existente (se existir)
+      file:
+        path: /opt/app
+        state: absent
+      ignore_errors: true
+
+    - name: clonar repositório da aplicação
+      git:
+        repo: https://github.com/eliseu-modan/ProjetoMessages.git
+        dest: /opt/app
+        version: main  # ou outra branch/tag que deseja
+        update: yes
+
+    - name: Instalação das dependências do projeto React
+      command: sudo env PATH=$PATH:/home/vagrant/.nvm/versions/node/v16.15.1/bin npm install
+      args:
+        chdir: /opt/app/frontend
+      environment:
+        npm_config_ignore_scripts: "true"
+
+    - name: Instalar Apache (httpd)
+      yum:
+        name: httpd
+        state: latest
+
+    - name: Iniciar e habilitar o serviço Apache
+      systemd:
+        name: httpd
+        state: started
+        enabled: yes
+
+    - name: Criar arquivo frontend-app.conf
+      copy:
+        content: |
+          <VirtualHost 192.168.1.3:80>
+             ServerName localhost
+             DocumentRoot /opt/app/frontend/public
+          </VirtualHost>
+        dest: /etc/httpd/conf.d/app.conf
+      notify: restart apache
+
+    - name: Iniciar aplicação React (em background)
+      async: 600
+      poll: 0
+      command: "sudo env NODE_OPTIONS='--max-old-space-size=4096' PATH=$PATH:/home/vagrant/.nvm/versions/node/v16.15.1/bin npm start"
+      args:
+        chdir: /opt/app/frontend
+      environment:
+        npm_config_ignore_scripts: "true"
+      register: async_result
+
+
+    - name: Aguardar até que a aplicação React seja iniciada
+      wait_for:
+        host: localhost
+        port: 3000
+        timeout: 300
+
+    - name: Instalação das dependências do projeto Node.js no backend
+      command: sudo env PATH=$PATH:/home/vagrant/.nvm/versions/node/v16.15.1/bin npm install
+      args:
+        chdir: /opt/app/BackEnd
+      environment:
+        npm_config_ignore_scripts: "true"
+      become: true
+
+    - name: Corrigir permissões no diretório do projeto
+      file:
+        path: /opt/app/BackEnd/node_modules/.bin
+        state: directory
+        recurse: yes
+        owner: vagrant
+        group: vagrant
+        mode: "u+rwx,g+rwx,o-rwx"
+      become: true
+
+    - name: Gerar Prisma Client
+      environment:
+        PATH: "{{ ansible_env.PATH }}:/home/vagrant/.nvm/versions/node/v16.15.1/bin"
+      command: npx prisma generate
+      args:
+        chdir: /opt/app/BackEnd
+      become: true
+
+    - name: Iniciar backend com npm run dev:server
+      command: "npm run dev:server > /opt/app/BackEnd/logs/backend.log 2>&1 &"
+      args:
+       chdir: /opt/app/BackEnd
+      environment:
+       PATH: "{{ ansible_env.PATH }}:/home/vagrant/.nvm/versions/node/v16.15.1/bin"
+      become: true
+
+  handlers:
+    - name: restart apache
+      service:
+        name: httpd
+        state: restarted
+
+
+
+
+
+
+
+
+
+
+

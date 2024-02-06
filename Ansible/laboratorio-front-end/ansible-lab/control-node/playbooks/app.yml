@@ -1,0 +1,73 @@
+- name: Configurar servidor de aplicação React
+  hosts: app01
+  user: vagrant
+  become: true
+  tasks:
+    - name: Adicionar usuário de app
+      user:
+        name: app
+        comment: Usuário de aplicação
+        uid: 500
+
+    - name: Instalação do Git
+      yum:
+        name: git
+        state: latest
+
+    - name: Excluir repositório existente (se existir)
+      file:
+        path: /opt/frontend-app
+        state: absent
+      ignore_errors: true
+
+
+    - name: Atualizar repositório da aplicação React
+      git:
+        repo: https://github.com/eliseu-modan/frontend-app-devops.git
+        dest: /opt/frontend-app
+        version: main  # ou outra branch/tag que deseja
+        update: yes
+
+
+    - name: Atualizar package-lock.json
+      command: "sudo env PATH=$PATH:/home/vagrant/.nvm/versions/node/v14.21.3/bin npm install --package-lock-only"
+      args:
+        chdir: /opt/frontend-app
+
+    - name: Instalação das dependências do projeto React
+      command: "sudo env PATH=$PATH:/home/vagrant/.nvm/versions/node/v14.21.3/bin npm install"
+      args:
+       chdir: /opt/frontend-app
+
+    - name: Instalar Apache (httpd)
+      yum:
+       name: httpd
+       state: latest
+
+    - name: Iniciar e habilitar o serviço Apache
+      systemd:
+       name: httpd
+       state: started
+       enabled: yes
+
+    - name: Criar arquivo frontend-app.conf
+      copy:
+        content: |
+          <VirtualHost 192.168.1.3:80>
+             ServerName localhost
+             DocumentRoot /opt/frontend-app/public
+          </VirtualHost>
+        dest: /etc/httpd/conf.d/frontend-app.conf
+      notify: restart apache
+
+    - name: Iniciar aplicação React
+      command: sudo env PATH=$PATH:/home/vagrant/.nvm/versions/node/v14.21.3/bin npm start
+      args:
+       chdir: /opt/frontend-app
+
+  handlers:
+    - name: restart apache
+      service:
+        name: httpd
+        state: restarted
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               ~                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               ~                                                                                                                                                                                                                                                                                                                                                                       

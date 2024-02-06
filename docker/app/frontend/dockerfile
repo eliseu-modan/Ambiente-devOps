@@ -14,8 +14,6 @@ WORKDIR /app/front/frontend
 RUN npm install
 
 
-# Expor a porta necessária para o frontend (substitua pela porta correta se necessário)
-EXPOSE 5173
 
 # Comando de inicialização para o frontend (ajuste conforme necessário)
 CMD ["yarn", "dev", "--host"]

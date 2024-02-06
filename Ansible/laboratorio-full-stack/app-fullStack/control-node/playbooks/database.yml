@@ -1,0 +1,56 @@
+---
+- name: Configurar MySQL e Prisma Client
+  hosts: database
+  become: true
+  vars:
+    mysql_root_password: "12345junior"
+    mysql_database_name: "devops"
+    mysql_user: "eliseujunior"
+    mysql_password: "12345junior"
+  tasks:
+
+    - name: Iniciar e habilitar o serviço MySQL
+      systemd:
+        name: mysqld
+        state: started
+        enabled: yes
+
+    - name: Configurar senha do usuário root do MySQL
+      expect:
+        command: mysqladmin
+        args: "password {{ mysql_root_password }}"
+        responses:
+          "Enter password:": "{{ mysql_root_password }}"
+
+    - name: Criar banco de dados e usuário no MySQL
+      mysql_db:
+        name: "{{ mysql_database_name }}"
+        state: present
+      mysql_user:
+        name: "{{ mysql_user }}"
+        password: "{{ mysql_password }}"
+        priv: "{{ mysql_database_name }}.*:ALL"
+        state: present
+
+
+    - name: Copiar schema.prisma da máquina app para a máquina database
+      fetch:
+      src: /opt/app/BackEnd/schema.prisma
+      dest: /tmp/schema.prisma
+      flat: yes
+      fail_on_missing: yes
+      validate_checksum: yes
+
+    - name: Configurar o datasource no schema.prisma
+      lineinfile:
+      path: /tmp/schema.prisma
+      line: 'url      = "mysql://{{ mysql_user }}:{{ mysql_password }}@localhost:3306/{{ mysql_database_name }}"'
+
+
+    - name: Copiar schema.prisma de volta para a máquina app
+      copy:
+       src: /tmp/schema.prisma
+      dest: /opt/app/BackEnd/schema.prisma
+      mode: 0644
+
+
