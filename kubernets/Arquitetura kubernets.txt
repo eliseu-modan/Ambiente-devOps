@@ -1,0 +1,122 @@
+install Vagrant 2.2.14
+install vuirtual Box 6.1.26
+vagrant plugin install vagrant-vbguest --plugin-version 0.21
+vagrant UP
+VAGRANT --PROVISION
+vagrant ssh
+exit
+ping 1.234.1.2
+vagrant reload --provision
+vagrant destroy
+ssh vagrant@db01
+vagrant install sudo nano
+cat hosts
+sudu vi /etc/ansible/hosts      config conect
+cat /etc/hosts                  config conect
+sudo firewall-cmd --list-all
+sudo firewall-cmd --add-port=3000/tcp --permanent
+sudo firewall-cmd --reload
+systemctl status nodejs-app
+sudo systemctl start firewalld
+sudo yum install -y lsof
+sudo firewall-cmd --add-port=3000/tcp --permanent
+ansible-playbook db.yaml --check
+ansible-playbook app.yml --check
+sudo vi /etc/ssh/sshd_config   config conect
+PubkeyAuthentication yes       config conect
+AuthorizedKeysFile      .ssh/authorized_keys     config conect
+PasswordAuthentication no
+sudo systemctl restart sshd
+cat ~/.ssh/id_rsa.pub                      condig conecti
+ ssh-keygen -t rsa -b 2048 
+[10]+  Stopped                 sudo vi hosts
+[vagrant@control-node ansible]$
+
+[vagrant@app01 /]$ export NVM_DIR="$HOME/.nvm"
+[vagrant@app01 /]$ [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[vagrant@app01 /]$ [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+[vagrant@app01 /]$ nvm install node
+[vagrant@app01 frontend-app]$ sudo env "PATH=$PATH" npm install
+
+
+
+1 - instalações
+
+    - vagarant 
+    - virtualBox
+    - PLugin vbGuest
+
+2 - Configurar AMbiente com Ansible 
+
+    - criar maquina control Node
+    - Instalar  ansible
+    - criar os hosts das maquinas (ips) no vagrant 
+
+3 - infraestrutura de código Laboratório
+
+    - criar as outras maquinas APP01 | DB01
+    - realizar o ping nas maquinas ( controlNode - app01 - db01 )
+    - configurar a chave do control node nas db01 | app01
+    - verificar as hosts
+    - playbooks arquivo  para as maquinas inventarios db01 app01 (AnsibleGalxy  collections )
+    - 
+
+
+4 - db01 baixar o servidor mysql 
+    configurar a conexão do prisma ao mysql 
+    datasource db {
+  provider = "mysql"
+  url      = "mysql://root:1357.modanesi@localhost:3306/systemfullstack"
+}
+   instalar dependencias do prisma 
+    npx prisma generate
+    npx prisma migrate dev
+        
+
+
+
+
+
+conectar maquinas
+
+1 verificar pings das maquina (arquivo  sudo vi hosts)
+2 configurar chaves
+sudu vi /etc/ansible/hosts      config conect
+cat /etc/hosts                  config conect
+sudo vi /etc/ssh/sshd_config   config conect
+PubkeyAuthentication yes       config conect
+AuthorizedKeysFile      .ssh/authorized_keys     config conect
+PasswordAuthentication no
+cat ~/.ssh/id_rsa.pub
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/authorized_keys
+
+
+
+herar chave publica : [vagrant@control .ssh]$ ssh-keygen -t rsa -b 2048 -f ~/.ssh/id_rsa
+Generating public/private rsa key pair.
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in /home/vagrant/.ssh/id_rsa.
+Your public key has been saved in /home/vagrant/.ssh/id_rsa.pub.
+The key fingerprint is:
+SHA256:DakMw2gCfhwt9EVQ2Zys/aEasWnlStu6jb7N0aiN69I vagrant@control
+The key's randomart image is:
++---[RSA 2048]----+
+|. .o..++= .      |
+|o .+o... *       |
+|..oo=.  =        |
+| o.  + + = .     |
+|      o S + .    |
+|       * oo.     |
+|      + *o .     |
+|     . EO..      |
+|      +@==       |
++----[SHA256]-----+
+
+[vagrant@control .ssh]$ cat ~/.ssh/id_rsa.pub
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCt4/iAwkbO8qmeQxJLnt6761ZxskOa90kjzxTKV5hlDwboO9zixEfD0XZB1CHH1tD+j2Qy07cbyarkANRhpDGFLI8w9ys6lPKvzfCgv9zrlznrYvWancMz26NL+zsRks1W5J64hc29h25zcgkRnzAXXggQ+Gdt0ezNy6F3P0pu15R5PFWZGCxBjB9L+zt9O0J/uSjq8i1b5La423h8M6JXZIFDAyxENp3Vi92sL0thmNsxzIjGEeWrmklNdtrjpygn3/7MVnifDWN9xJIBxNeUF6z0H2j7M/gZElmVRKodGFW5Ted1GjdRupUv8we+aQRtOgHDoaywwe4PStAly3V9 vagrant@control
+[vagrant@control .ssh]$ ssh vagrant@app
+Last login: Tue Dec 26 21:11:06 2023 from 10.0.2.2 
+colar chave publica no authorized_keys da app
+
