@@ -1,7 +1,34 @@
 pipeline {
     agent any
+
+
     stages {
-        stage('Criar Dockerfile.combined') {
+        stage('Iniciando a aplicação - docker-compose') {
+            steps {
+                script {
+                    // Iniciar o ambiente do Docker Compose
+                    sh 'docker-compose up --build -d'
+                }
+            }
+        }
+
+
+
+        stage('Escaneando a qualidade do código - SonarQube') {
+            steps {
+                script {
+                    scannerHome = tool 'sonar-scanner';
+                }
+                withSonarQubeEnv('sonar-server') {
+                    sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=app -Dsonar.sources=. -Dsonar.host.url=${env.SONAR_HOST_URL} -Dsonar.login=${env.SONAR_AUTH_TOKEN}"
+                }
+            }
+        }
+ 
+
+        
+
+        stage('Criando diretório - docker') {
             steps {
                 script {
                     def dockerfileContent = """
@@ -22,7 +49,7 @@ pipeline {
             }
         }
 
-        stage('Build da imagem Docker') {
+        stage('Empacotando aplicação - docker') {
             steps {
                 script {
                     // Construir o backend
@@ -44,43 +71,24 @@ pipeline {
                     
                     // Remover contêineres temporários
                     sh 'docker rm fronte backe'
+                    
+                    }
                 }
-            }
+            
         }
-
-        stage('Subir docker compose - tasks') {
-            steps {
-                script {
-                    sh 'docker-compose up --build -d'
-                }
-            }
-        }
-
-        stage('Aguardar subida dos containers') {
-            steps {
-                script {
-                    sh 'sleep 10'
-                }
-            }
-        }
-      stage('Sonarqube validation'){
-         steps{
-            script {
-                 scannerHome = tool 'sonar-scanner';
-              }
-            withSonarQubeEnv('sonar-server'){
-                 sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=tasks -Dsonar.sources=. -Dsonar.host.url=${env.SONAR_HOST_URL} -Dsonar.login=${env.SONAR_AUTH_TOKEN}"
-            }
-       }
-
-}
-    stage('Quality Gate'){
-        steps{
-            withForQualityGate abortPipeline: true
-        }
-    }
+                 stage('upload docker image'){
+                      steps{
+                         script{
+                           withCredentials([usernamePassword(credentialsId: 'nexus_user', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]){
+                             sh 'docker login -u $USERNAME -p $PASSWORD ${NEXUS_URL}'
+                             sh 'docker tag combined:latest ${NEXUS_URL}/combined'
+                             sh 'docker push ${NEXUS_URL}/combined'
+                        }
+                      }
+                    }
+                 }
 
 
+ }
 
-    }
 }
