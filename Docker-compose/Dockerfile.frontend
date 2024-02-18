@@ -1,0 +1,7 @@
+FROM node:14-alpine AS frontend-builder
+WORKDIR /frontend
+RUN apk --no-cache add git openssh-client
+COPY frontend/package.json .
+RUN npm install --force
+COPY frontend .
+CMD ["yarn", "dev", "--host"]

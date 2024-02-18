@@ -1,0 +1,9 @@
+FROM node:16-alpine AS backend-builder
+WORKDIR /backend
+RUN apk --no-cache add git openssh-client
+COPY backend/package.json .
+RUN npm install --save
+COPY backend .
+RUN npx prisma generate 
+RUN pwd
+CMD ["npm", "run", "dev:server"]
