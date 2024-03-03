@@ -1,0 +1,24 @@
+FROM node:16-alpine AS backend-builder
+WORKDIR /backend
+
+# Instalar dependências
+RUN apk --no-cache add git openssh-client
+
+# Copiar o arquivo package.json e instalar as dependências
+COPY backend/package.json .
+RUN npm install
+
+# Copiar o restante do código da aplicação
+COPY backend .
+
+# Definir as permissões de execução para o Prisma
+RUN chmod +x node_modules/.bin/prisma
+# Definir as permissões de execução para o nodemon
+RUN chmod +x node_modules/.bin/nodemon
+
+# Copiar e definir as permissões de execução para o arquivo entrypoint.sh
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# Definir o comando de execução padrão
+CMD ["/entrypoint.sh"]

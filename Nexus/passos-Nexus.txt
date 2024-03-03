@@ -1,21 +1,21 @@
-1- iniciar a maquina do jenkins coom as novas configurações para instalar o nexus dentro dela : memoria , e forwarde da porta
+1- iniciar a maquina do jenkins coom as novas configurações para instalar o nexus dentro dela : memoria , e forward da porta
 
 3- entrar na maquina via ssh
 
-4- criar volume docker docker volume create --name nexus-data
+4- criar volume docker:  docker volume create --name nexus-data
 
-5-criar serviço nexus docker run  -d -p 8091:8081 -p 8123:8123 --name nexus -v nexus-data:/nexus-data sonatype/nexus3
+5-criar serviço nexus : docker run  -d -p 8091:8081 -p 8123:8123 --name nexus -v nexus-data:/nexus-data sonatype/nexus3
 
 6-verificar serviço na porta 8091:  docker logs -f nexus
 
 7- realizar o login - ir até a maquina virtual e aplicar o comando : 
 docker exec -it nexus bash
 bash-4.4$ cat /nexus-data/admin.password
-copiar a chave e colocar admin e a chave copiada d4f40d87-ca85-4144-9e4b-87e8c461f8df ,na interface do nexs
+copiar a chave e colocar admin e a chave copiada d4f40d87-ca85-4144-9e4b-87e8c461f8df ,na interface do nexus
 
 8- criar um novo password welcome 1 
 
-9 - checkar como não anomino 
+9 - checkar como não anômino 
 
 10- ir até as configrações do nexus -> users -> criar novo user -> configurar o nome e senha
 
@@ -39,5 +39,5 @@ docker images
 
  2 - criar as credentials do nexus no jenkins : credentials - app - adicionar credentials - jenkins , welcome1 , nexus_user
 
- 3 - ir até o pipeline
+ 3 - configurar o arquivo vagrantfile no diretório do projeto
 

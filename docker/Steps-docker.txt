@@ -49,7 +49,22 @@ docker rm $(docker ps -aq)
 docker rmi $(docker images -aq)
 docker stop $(docker ps -aq) && docker rm $(docker ps -aq) && docker rmi $(docker images -aq)
 
+installing mysql 
 
+wget http://repo.mysql.com/mysql80-community-release-el7-10.noarch.rpm
+
+
+
+permissoes pra entrar via root
+antes de realizar as permissoes precxisamos comentar 2 linhas do compose 
+USER E PASSWORD e depois rodar o compose para executar o mysql na porta 3306 
+
+systemctl stop mysqld
+[root@docker ~]# systemctl set-environment MYSQLD_OPTS="--skip-grant-tables"
+[root@docker ~]# systemctl start mysqld
+[root@docker ~]# mysql -u root
+
+configurar o host da maquina na api do projeto e reiniciar a maquina 
                
 
 

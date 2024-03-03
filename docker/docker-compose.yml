@@ -1,11 +1,45 @@
-version: '3'
-
+version: "3"
 services:
-  frontend:
+  frontends:
     build:
       context: .
-      dockerfile: dockerfile.frontend
-    command: npm test
+      dockerfile: Dockerfile.frontend
+    command: yarn dev --host
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backends
+    networks:
+      - redeInternal
+
+  backends:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    environment:
+      - DATABASE_URL=mysql://root:12345junior@db:3306/projetoTask
+    command: npm run dev:server
+    ports:
+      - "3333:3333"
+    depends_on:
+      - db
+    networks:
+      - redeInternal
+
+  db:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: 12345junior
+      MYSQL_DATABASE: projetoTask
+      MYSQL_USER: root
+      MYSQL_PASSWORD: 12345junior
     volumes:
-      - ./frontend:/app
-    working_dir: /app
+      - mysql-data:/var/lib/mysql
+    networks:
+      - redeInternal
+
+volumes:
+  mysql-data:
+
+networks:
+  redeInternal:

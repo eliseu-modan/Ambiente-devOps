@@ -1,1 +1,2 @@
 - Realizar o Backup das maquinas virtuais
+https://helpdeskgeek.com/help-desk/6-ways-to-fix-virtualbox-result-code-e_fail-0x80004005-error-in-windows/
